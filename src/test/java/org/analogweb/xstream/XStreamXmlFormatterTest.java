@@ -8,13 +8,13 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.analogweb.RequestContext;
 import org.analogweb.exception.FormatFailureException;
+import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,12 +50,12 @@ public class XStreamXmlFormatterTest {
             }
         });
         Foo f = new Foo();
-        f.birthDay = new SimpleDateFormat("yyyyMMdd").parse("19780420");
+        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
         formatter.formatAndWriteInto(context, "UTF-8", f);
         String actual = new String(out.toByteArray());
         assertThat(
                 actual,
-                is("<?xml version=\"1.0\" ?><org.analogweb.xstream.XStreamXmlFormatterTest_-Foo><name>foo</name><age>34</age><birthDay>1978-04-20 00:00:00.0 JST</birthDay></org.analogweb.xstream.XStreamXmlFormatterTest_-Foo>"));
+                is("<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age><birthDay>1978-04-20 00:00:00.0 JST</birthDay></org.analogweb.xstream.model.Foo>"));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class XStreamXmlFormatterTest {
             }
         });
         Foo f = new Foo();
-        f.birthDay = new SimpleDateFormat("yyyyMMdd").parse("19780420");
+        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
         formatter.formatAndWriteInto(context, "UTF-8", f);
     }
 
@@ -77,14 +77,8 @@ public class XStreamXmlFormatterTest {
         thrown.expect(FormatFailureException.class);
         when(response.getOutputStream()).thenThrow(new IOException());
         Foo f = new Foo();
-        f.birthDay = new SimpleDateFormat("yyyyMMdd").parse("19780420");
+        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
         formatter.formatAndWriteInto(context, "UTF-8", f);
-    }
-
-    static class Foo {
-        String name = "foo";
-        int age = 34;
-        Date birthDay;
     }
 
 }
