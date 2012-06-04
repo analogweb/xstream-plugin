@@ -15,6 +15,11 @@ import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
+ * XStreamによる変換により、リクエストされたXMLを任意のオブジェクト
+ * のインスタンスに変換する{@link TypeMapper}の実装です。<br/>
+ * 変換元の値として、リクエストされたXMLを保持する{@link InputStream}
+ * または{@link Reader}(読み込み可能なリクエストボディ)が指定されている
+ * 必要があります。
  * @author snowgoose
  */
 public class XStreamXmlTypeMapper implements TypeMapper {

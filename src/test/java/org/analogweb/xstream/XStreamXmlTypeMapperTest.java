@@ -63,37 +63,48 @@ public class XStreamXmlTypeMapperTest {
     }
 
     @Test
+    public void testMapToTypeWithAnotherType() throws Exception {
+        when(request.getContentType()).thenReturn("text/xml");
+        String from = "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>38</age><birthDay>1978-04-20 00:00:00.0 JST</birthDay></org.analogweb.xstream.model.Foo>";
+        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
+                is(nullValue()));
+    }
+
+    @Test
     public void testMapToTypeWithoutXmlStream() throws Exception {
         when(request.getContentType()).thenReturn("application/xml");
         InputStream from = new ByteArrayInputStream("XXX".getBytes());
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null), is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
+                is(nullValue()));
     }
 
     @Test
     public void testMapToTypeWithoutXmlReader() throws Exception {
         when(request.getContentType()).thenReturn("application/xml");
         StringReader from = new StringReader("{hoge:XXX}");
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null), is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
+                is(nullValue()));
     }
 
     @Test
     public void testMapToTypeWithIOError() throws Exception {
         when(request.getContentType()).thenReturn("application/x-d");
-        InputStream from = new InputStream(){
+        InputStream from = new InputStream() {
             @Override
-            public int read() throws IOException{
+            public int read() throws IOException {
                 throw new IOException();
             }
         };
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null), is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
+                is(nullValue()));
     }
 
     @Test
     public void testMapToTypeAnotherContentType() throws Exception {
         when(request.getContentType()).thenReturn("application/x-d");
-        InputStream from = new ByteArrayInputStream(
-                "???".getBytes());
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null), is(nullValue()));
+        InputStream from = new ByteArrayInputStream("???".getBytes());
+        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
+                is(nullValue()));
     }
 
 }

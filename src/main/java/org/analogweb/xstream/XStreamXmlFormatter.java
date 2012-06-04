@@ -11,10 +11,14 @@ import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
+ * XStreamフレームワークを使用したXMLの
+ * レンダリングを行う{@link DirectionFormatter}の実装です。<br/>
+ * 既定の実装では、{@link XStream}がXMLを生成する際{@link StaxDriver}
+ * を使用するよう設定されます。
  * @author snowgoose
  */
 public class XStreamXmlFormatter implements DirectionFormatter {
-    
+
     private XStream xStream;
     
     public XStreamXmlFormatter(){

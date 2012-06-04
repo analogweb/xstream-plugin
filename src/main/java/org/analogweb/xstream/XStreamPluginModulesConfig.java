@@ -9,6 +9,11 @@ import org.analogweb.util.logging.Log;
 import org.analogweb.util.logging.Logs;
 
 /**
+ * <a href="http://xstream.codehaus.org/">XStream</a>フレームワークを
+ * <a href="https://github.com/analogweb">Analog Web Framework</a>
+ * に統合する{@link PluginModulesConfig}です。<br/>
+ * このプラグインを使用することで、{@link Xml}使用時に、
+ * XStreamを利用したXMLの生成とレスポンスを行う事が可能になります。
  * @author snowgoose
  */
 public class XStreamPluginModulesConfig implements PluginModulesConfig {
