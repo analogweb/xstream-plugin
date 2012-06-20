@@ -21,15 +21,14 @@ public class XStreamXmlFormatter implements DirectionFormatter {
 
     private XStream xStream;
     
-    public XStreamXmlFormatter(){
-        this.xStream = initXStream();
-    }
-
     protected XStream initXStream() {
         return new XStream(new StaxDriver());
     }
     
-    protected XStream getXStream(){
+    protected XStream getXStream() {
+        if (this.xStream == null) {
+            this.xStream = initXStream();
+        }
         return this.xStream;
     }
 

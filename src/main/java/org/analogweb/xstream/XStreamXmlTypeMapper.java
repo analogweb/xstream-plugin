@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  */
 public class XStreamXmlTypeMapper implements TypeMapper {
 
-    private XStream xStream = initXStream();
+    private XStream xStream;
 
     protected XStream initXStream() {
         return new XStream(new StaxDriver());
@@ -68,6 +68,9 @@ public class XStreamXmlTypeMapper implements TypeMapper {
     }
 
     protected XStream getXStream() {
+        if (this.xStream == null) {
+            this.xStream = initXStream();
+        }
         return this.xStream;
     }
 
