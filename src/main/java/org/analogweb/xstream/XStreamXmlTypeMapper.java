@@ -2,10 +2,9 @@ package org.analogweb.xstream;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.analogweb.RequestAttributes;
+import org.analogweb.Headers;
 import org.analogweb.RequestContext;
 import org.analogweb.TypeMapper;
 import org.analogweb.util.StringUtils;
@@ -31,8 +30,8 @@ public class XStreamXmlTypeMapper implements TypeMapper {
     }
 
     @Override
-    public Object mapToType(RequestContext context, RequestAttributes attributes, Object from,
-            Class<?> requiredType, String[] formats) {
+    public Object mapToType(RequestContext context, Object from, Class<?> requiredType,
+            String[] formats) {
         if (isXmlType(context)) {
             XStream xStream = getXStream();
             if (InputStream.class.isInstance(from)) {
@@ -61,8 +60,12 @@ public class XStreamXmlTypeMapper implements TypeMapper {
     }
 
     protected boolean isXmlType(RequestContext context) {
-        HttpServletRequest request = context.getRequest();
-        String contentType = request.getContentType();
+        Headers headers = context.getRequestHeaders();
+        List<String> contentTypes = headers.getValues("Content-Type");
+        if (contentTypes == null || contentTypes.isEmpty()) {
+            return false;
+        }
+        String contentType = contentTypes.get(0);
         return StringUtils.isNotEmpty(contentType)
                 && (contentType.startsWith("application/xml") || contentType.startsWith("text/xml"));
     }

@@ -10,10 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.analogweb.RequestAttributes;
+import org.analogweb.Headers;
 import org.analogweb.RequestContext;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
@@ -26,86 +25,85 @@ public class XStreamXmlTypeMapperTest {
 
     private XStreamXmlTypeMapper mapper;
     private RequestContext requestContext;
-    private RequestAttributes attributes;
-    private HttpServletRequest request;
+    private Headers headers;
 
     @Before
     public void setUp() throws Exception {
         mapper = new XStreamXmlTypeMapper();
         requestContext = mock(RequestContext.class);
-        request = mock(HttpServletRequest.class);
-        when(requestContext.getRequest()).thenReturn(request);
-        attributes = mock(RequestAttributes.class);
+        headers = mock(Headers.class);
     }
 
     @Test
     public void testMapToType() throws Exception {
-        when(request.getContentType()).thenReturn("application/xml");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         InputStream from = new ByteArrayInputStream(
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age></org.analogweb.xstream.model.Foo>"
                         .getBytes());
-        Foo actual = (Foo) mapper.mapToType(requestContext, attributes, from, Foo.class, null);
+        Foo actual = (Foo) mapper.mapToType(requestContext, from, Foo.class, null);
         assertThat(actual.getName(), is("foo"));
         assertThat(actual.getAge(), is(34));
         // TODO
-//        assertThat(actual.getBirthDay(), is(new SimpleDateFormat("yyyyMMdd").parse("19780420")));
+        //        assertThat(actual.getBirthDay(), is(new SimpleDateFormat("yyyyMMdd").parse("19780420")));
     }
 
     @Test
     public void testMapToTypeWithReader() throws Exception {
-        when(request.getContentType()).thenReturn("text/xml");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("text/xml"));
         StringReader from = new StringReader(
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>38</age></org.analogweb.xstream.model.Foo>");
-        Foo actual = (Foo) mapper.mapToType(requestContext, attributes, from, Foo.class, null);
+        Foo actual = (Foo) mapper.mapToType(requestContext, from, Foo.class, null);
         assertThat(actual.getName(), is("foo"));
         assertThat(actual.getAge(), is(38));
         // TODO
-//        assertThat(actual.getBirthDay(), is(new SimpleDateFormat("yyyyMMdd").parse("19780420")));
+        //        assertThat(actual.getBirthDay(), is(new SimpleDateFormat("yyyyMMdd").parse("19780420")));
     }
 
     @Test
     public void testMapToTypeWithAnotherType() throws Exception {
-        when(request.getContentType()).thenReturn("text/xml");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("text/xml"));
         String from = "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>38</age><birthDay>1978-04-20 00:00:00.0 JST</birthDay></org.analogweb.xstream.model.Foo>";
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
-                is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
     }
 
     @Test
     public void testMapToTypeWithoutXmlStream() throws Exception {
-        when(request.getContentType()).thenReturn("application/xml");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         InputStream from = new ByteArrayInputStream("XXX".getBytes());
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
-                is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
     }
 
     @Test
     public void testMapToTypeWithoutXmlReader() throws Exception {
-        when(request.getContentType()).thenReturn("application/xml");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         StringReader from = new StringReader("{hoge:XXX}");
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
-                is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
     }
 
     @Test
     public void testMapToTypeWithIOError() throws Exception {
-        when(request.getContentType()).thenReturn("application/x-d");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
         InputStream from = new InputStream() {
             @Override
             public int read() throws IOException {
                 throw new IOException();
             }
         };
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
-                is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
     }
 
     @Test
     public void testMapToTypeAnotherContentType() throws Exception {
-        when(request.getContentType()).thenReturn("application/x-d");
+        when(requestContext.getRequestHeaders()).thenReturn(headers);
+        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
         InputStream from = new ByteArrayInputStream("???".getBytes());
-        assertThat(mapper.mapToType(requestContext, attributes, from, Foo.class, null),
-                is(nullValue()));
+        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
     }
 
 }

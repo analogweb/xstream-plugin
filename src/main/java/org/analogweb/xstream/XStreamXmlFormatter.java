@@ -20,11 +20,11 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 public class XStreamXmlFormatter implements DirectionFormatter {
 
     private XStream xStream;
-    
+
     protected XStream initXStream() {
         return new XStream(new StaxDriver());
     }
-    
+
     protected XStream getXStream() {
         if (this.xStream == null) {
             this.xStream = initXStream();
@@ -35,8 +35,8 @@ public class XStreamXmlFormatter implements DirectionFormatter {
     @Override
     public void formatAndWriteInto(RequestContext writeTo, String charset, Object source) {
         try {
-            getXStream().toXML(source, writeTo.getResponse().getOutputStream());
-        } catch(StreamException e){
+            getXStream().toXML(source, writeTo.getResponseBody());
+        } catch (StreamException e) {
             throw new FormatFailureException(e, source, getClass().getName());
         } catch (IOException e) {
             throw new FormatFailureException(e, source, getClass().getName());

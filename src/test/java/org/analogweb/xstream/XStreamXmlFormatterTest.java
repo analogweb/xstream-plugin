@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.analogweb.RequestContext;
 import org.analogweb.exception.FormatFailureException;
@@ -27,7 +26,6 @@ public class XStreamXmlFormatterTest {
 
     private XStreamXmlFormatter formatter;
     private RequestContext context;
-    private HttpServletResponse response;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -36,14 +34,12 @@ public class XStreamXmlFormatterTest {
     public void setUp() throws Exception {
         formatter = new XStreamXmlFormatter();
         context = mock(RequestContext.class);
-        response = mock(HttpServletResponse.class);
-        when(context.getResponse()).thenReturn(response);
     }
 
     @Test
     public void testFormatAndWriteInto() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        when(response.getOutputStream()).thenReturn(new ServletOutputStream() {
+        when(context.getResponseBody()).thenReturn(new ServletOutputStream() {
             @Override
             public void write(int arg0) throws IOException {
                 out.write(arg0);
@@ -51,7 +47,7 @@ public class XStreamXmlFormatterTest {
         });
         Foo f = new Foo();
         // TODO 
-//        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
+        //        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
         formatter.formatAndWriteInto(context, "UTF-8", f);
         String actual = new String(out.toByteArray());
         assertThat(
@@ -62,7 +58,7 @@ public class XStreamXmlFormatterTest {
     @Test
     public void testFormatAndWriteIntoRaiseIOException() throws Exception {
         thrown.expect(FormatFailureException.class);
-        when(response.getOutputStream()).thenReturn(new ServletOutputStream() {
+        when(context.getResponseBody()).thenReturn(new ServletOutputStream() {
             @Override
             public void write(int arg0) throws IOException {
                 throw new IOException();
@@ -76,7 +72,7 @@ public class XStreamXmlFormatterTest {
     @Test
     public void testFormatAndWriteIntoRaiseIOException2() throws Exception {
         thrown.expect(FormatFailureException.class);
-        when(response.getOutputStream()).thenThrow(new IOException());
+        when(context.getResponseBody()).thenThrow(new IOException());
         Foo f = new Foo();
         f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
         formatter.formatAndWriteInto(context, "UTF-8", f);
