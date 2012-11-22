@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Arrays;
 
 import org.analogweb.Headers;
@@ -41,7 +40,8 @@ public class XStreamXmlTypeMapperTest {
         InputStream from = new ByteArrayInputStream(
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age></org.analogweb.xstream.model.Foo>"
                         .getBytes());
-        Foo actual = (Foo) mapper.mapToType(requestContext, from, Foo.class, null);
+        when(requestContext.getRequestBody()).thenReturn(from);
+        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
         assertThat(actual.getName(), is("foo"));
         assertThat(actual.getAge(), is(34));
         // TODO
@@ -49,40 +49,13 @@ public class XStreamXmlTypeMapperTest {
     }
 
     @Test
-    public void testMapToTypeWithReader() throws Exception {
-        when(requestContext.getRequestHeaders()).thenReturn(headers);
-        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("text/xml"));
-        StringReader from = new StringReader(
-                "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>38</age></org.analogweb.xstream.model.Foo>");
-        Foo actual = (Foo) mapper.mapToType(requestContext, from, Foo.class, null);
-        assertThat(actual.getName(), is("foo"));
-        assertThat(actual.getAge(), is(38));
-        // TODO
-        //        assertThat(actual.getBirthDay(), is(new SimpleDateFormat("yyyyMMdd").parse("19780420")));
-    }
-
-    @Test
-    public void testMapToTypeWithAnotherType() throws Exception {
-        when(requestContext.getRequestHeaders()).thenReturn(headers);
-        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("text/xml"));
-        String from = "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>38</age><birthDay>1978-04-20 00:00:00.0 JST</birthDay></org.analogweb.xstream.model.Foo>";
-        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
-    }
-
-    @Test
     public void testMapToTypeWithoutXmlStream() throws Exception {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         InputStream from = new ByteArrayInputStream("XXX".getBytes());
-        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
-    }
-
-    @Test
-    public void testMapToTypeWithoutXmlReader() throws Exception {
-        when(requestContext.getRequestHeaders()).thenReturn(headers);
-        when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
-        StringReader from = new StringReader("{hoge:XXX}");
-        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
+        when(requestContext.getRequestBody()).thenReturn(from);
+        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        assertThat(actual, is(nullValue()));
     }
 
     @Test
@@ -95,7 +68,9 @@ public class XStreamXmlTypeMapperTest {
                 throw new IOException();
             }
         };
-        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
+        when(requestContext.getRequestBody()).thenReturn(from);
+        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        assertThat(actual, is(nullValue()));
     }
 
     @Test
@@ -103,7 +78,9 @@ public class XStreamXmlTypeMapperTest {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
         InputStream from = new ByteArrayInputStream("???".getBytes());
-        assertThat(mapper.mapToType(requestContext, from, Foo.class, null), is(nullValue()));
+        when(requestContext.getRequestBody()).thenReturn(from);
+        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        assertThat(actual, is(nullValue()));
     }
 
 }

@@ -1,12 +1,15 @@
 package org.analogweb.xstream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
 import org.analogweb.Headers;
+import org.analogweb.InvocationMetadata;
 import org.analogweb.RequestContext;
 import org.analogweb.TypeMapper;
+import org.analogweb.core.AbstractAttributesHandler;
 import org.analogweb.util.StringUtils;
 
 import com.thoughtworks.xstream.XStream;
@@ -21,7 +24,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 必要があります。
  * @author snowgoose
  */
-public class XStreamXmlTypeMapper implements TypeMapper {
+public class XStreamXmlTypeMapper extends AbstractAttributesHandler {
 
     private XStream xStream;
 
@@ -30,28 +33,25 @@ public class XStreamXmlTypeMapper implements TypeMapper {
     }
 
     @Override
-    public Object mapToType(RequestContext context, Object from, Class<?> requiredType,
-            String[] formats) {
+    public String getScopeName() {
+        return "xml";
+    }
+
+    @Override
+    public Object resolveAttributeValue(RequestContext context, InvocationMetadata metadata,
+            String key, Class<?> requiredType) {
         if (isXmlType(context)) {
             XStream xStream = getXStream();
-            if (InputStream.class.isInstance(from)) {
-                return fromXml(xStream, (InputStream) from);
-            } else if (Reader.class.isInstance(from)) {
-                return fromXml(xStream, (Reader) from);
+            try {
+                return fromXml(xStream, context.getRequestBody());
+            } catch (IOException e) {
+                return null;
             }
         }
         return null;
     }
 
     protected Object fromXml(XStream xStream, InputStream from) {
-        try {
-            return xStream.fromXML(from);
-        } catch (StreamException e) {
-            return null;
-        }
-    }
-
-    protected Object fromXml(XStream xStream, Reader from) {
         try {
             return xStream.fromXML(from);
         } catch (StreamException e) {

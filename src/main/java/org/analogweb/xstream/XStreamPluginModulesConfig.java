@@ -29,6 +29,7 @@ public class XStreamPluginModulesConfig implements PluginModulesConfig {
     public ModulesBuilder prepare(ModulesBuilder builder) {
         log.log(PLUGIN_MESSAGE_RESOURCE, "IXSB000001");
         builder.addDirectionFormatterClass(Xml.class, XStreamXmlFormatter.class);
+        builder.addAttributesHandlerClass(XStreamXmlTypeMapper.class);
         return builder;
     }
 
