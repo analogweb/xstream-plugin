@@ -1,9 +1,12 @@
 package org.analogweb.xstream;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.analogweb.DirectionFormatter;
 import org.analogweb.RequestContext;
+import org.analogweb.ResponseContext;
+import org.analogweb.ResponseContext.ResponseEntity;
 import org.analogweb.exception.FormatFailureException;
 
 import com.thoughtworks.xstream.XStream;
@@ -33,14 +36,18 @@ public class XStreamXmlFormatter implements DirectionFormatter {
     }
 
     @Override
-    public void formatAndWriteInto(RequestContext writeTo, String charset, Object source) {
-        try {
-            getXStream().toXML(source, writeTo.getResponseBody());
-        } catch (StreamException e) {
-            throw new FormatFailureException(e, source, getClass().getName());
-        } catch (IOException e) {
-            throw new FormatFailureException(e, source, getClass().getName());
-        }
+    public void formatAndWriteInto(RequestContext response, ResponseContext writeTo,
+            String charset, final Object source) {
+        writeTo.getResponseWriter().writeEntity(new ResponseEntity() {
+            @Override
+            public void writeInto(OutputStream responseBody) throws IOException {
+                try {
+                    getXStream().toXML(source, responseBody);
+                } catch (StreamException e) {
+                    throw new FormatFailureException(e, source, getClass().getName());
+                }
+            }
+        });
     }
 
 }

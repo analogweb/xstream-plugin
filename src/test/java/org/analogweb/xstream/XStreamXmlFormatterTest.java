@@ -6,16 +6,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 
 import org.analogweb.RequestContext;
+import org.analogweb.ResponseContext;
+import org.analogweb.ResponseContext.ResponseWriter;
+import org.analogweb.core.DefaultResponseWriter;
 import org.analogweb.exception.FormatFailureException;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.StreamException;
 
 /**
  * @author snowgoose
@@ -24,6 +30,7 @@ public class XStreamXmlFormatterTest {
 
     private XStreamXmlFormatter formatter;
     private RequestContext context;
+    private ResponseContext responseContext;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -32,16 +39,19 @@ public class XStreamXmlFormatterTest {
     public void setUp() throws Exception {
         formatter = new XStreamXmlFormatter();
         context = mock(RequestContext.class);
+        responseContext = mock(ResponseContext.class);
     }
 
     @Test
     public void testFormatAndWriteInto() throws Exception {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        when(context.getResponseBody()).thenReturn(out);
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        ResponseWriter writer = new DefaultResponseWriter();
+        when(responseContext.getResponseWriter()).thenReturn(writer);
         Foo f = new Foo();
         // TODO 
         //        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, "UTF-8", f);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f);
+        writer.getEntity().writeInto(out);
         String actual = new String(out.toByteArray());
         assertThat(
                 actual,
@@ -49,21 +59,27 @@ public class XStreamXmlFormatterTest {
     }
 
     @Test
-    public void testFormatAndWriteIntoRaiseIOException() throws Exception {
+    public void testFormatAndWriteIntoRaiseStreamException() throws Exception {
         thrown.expect(FormatFailureException.class);
-        when(context.getResponseBody()).thenThrow(new IOException());
-        Foo f = new Foo();
-        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, "UTF-8", f);
-    }
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        ResponseWriter writer = new DefaultResponseWriter();
+        when(responseContext.getResponseWriter()).thenReturn(writer);
+        formatter = new XStreamXmlFormatter() {
+            @Override
+            protected XStream initXStream() {
+                return new XStream() {
+                    @Override
+                    public void toXML(Object source, OutputStream out) throws StreamException {
+                        throw new StreamException("streaming error!");
+                    }
+                };
+            }
 
-    @Test
-    public void testFormatAndWriteIntoRaiseIOException2() throws Exception {
-        thrown.expect(FormatFailureException.class);
-        when(context.getResponseBody()).thenThrow(new IOException());
+        };
         Foo f = new Foo();
         f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, "UTF-8", f);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f);
+        writer.getEntity().writeInto(out);
     }
 
 }
