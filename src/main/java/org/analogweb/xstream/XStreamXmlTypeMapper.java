@@ -3,14 +3,14 @@ package org.analogweb.xstream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.List;
 
-import org.analogweb.Headers;
 import org.analogweb.InvocationMetadata;
+import org.analogweb.MediaType;
 import org.analogweb.RequestContext;
 import org.analogweb.TypeMapper;
 import org.analogweb.core.AbstractAttributesHandler;
-import org.analogweb.util.StringUtils;
+import org.analogweb.core.MediaTypes;
+import org.analogweb.core.SpecificMediaTypeAttirbutesHandler;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
@@ -24,7 +24,8 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 必要があります。
  * @author snowgoose
  */
-public class XStreamXmlTypeMapper extends AbstractAttributesHandler {
+public class XStreamXmlTypeMapper extends AbstractAttributesHandler implements
+        SpecificMediaTypeAttirbutesHandler {
 
     private XStream xStream;
 
@@ -40,15 +41,12 @@ public class XStreamXmlTypeMapper extends AbstractAttributesHandler {
     @Override
     public Object resolveAttributeValue(RequestContext context, InvocationMetadata metadata,
             String key, Class<?> requiredType) {
-        if (isXmlType(context)) {
-            XStream xStream = getXStream();
-            try {
-                return fromXml(xStream, context.getRequestBody());
-            } catch (IOException e) {
-                return null;
-            }
+        XStream xStream = getXStream();
+        try {
+            return fromXml(xStream, context.getRequestBody());
+        } catch (IOException e) {
+            return null;
         }
-        return null;
     }
 
     protected Object fromXml(XStream xStream, InputStream from) {
@@ -59,15 +57,10 @@ public class XStreamXmlTypeMapper extends AbstractAttributesHandler {
         }
     }
 
-    protected boolean isXmlType(RequestContext context) {
-        Headers headers = context.getRequestHeaders();
-        List<String> contentTypes = headers.getValues("Content-Type");
-        if (contentTypes == null || contentTypes.isEmpty()) {
-            return false;
-        }
-        String contentType = contentTypes.get(0);
-        return StringUtils.isNotEmpty(contentType)
-                && (contentType.startsWith("application/xml") || contentType.startsWith("text/xml"));
+    @Override
+    public boolean supports(MediaType mediaType) {
+        return MediaTypes.valueOf("*/xml").isCompatible(mediaType)
+                || mediaType.getSubType().endsWith("+xml");
     }
 
     protected XStream getXStream() {

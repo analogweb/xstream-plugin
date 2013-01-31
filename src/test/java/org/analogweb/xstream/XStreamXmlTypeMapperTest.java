@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import org.analogweb.Headers;
 import org.analogweb.RequestContext;
+import org.analogweb.core.MediaTypes;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,4 +84,14 @@ public class XStreamXmlTypeMapperTest {
         assertThat(actual, is(nullValue()));
     }
 
+    @Test
+    public void testSupports() {
+        assertThat(mapper.supports(MediaTypes.TEXT_XML_TYPE), is(true));
+        assertThat(mapper.supports(MediaTypes.APPLICATION_XML_TYPE), is(true));
+        assertThat(mapper.supports(MediaTypes.APPLICATION_SVG_XML_TYPE), is(true));
+        assertThat(mapper.supports(MediaTypes.APPLICATION_ATOM_XML_TYPE), is(true));
+
+        assertThat(mapper.supports(MediaTypes.APPLICATION_JSON_TYPE), is(false));
+        assertThat(mapper.supports(MediaTypes.TEXT_PLAIN_TYPE), is(false));
+    }
 }
