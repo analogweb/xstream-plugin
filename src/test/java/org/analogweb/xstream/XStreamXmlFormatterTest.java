@@ -13,7 +13,7 @@ import org.analogweb.RequestContext;
 import org.analogweb.ResponseContext;
 import org.analogweb.ResponseContext.ResponseWriter;
 import org.analogweb.core.DefaultResponseWriter;
-import org.analogweb.exception.FormatFailureException;
+import org.analogweb.core.FormatFailureException;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
 import org.junit.Rule;
