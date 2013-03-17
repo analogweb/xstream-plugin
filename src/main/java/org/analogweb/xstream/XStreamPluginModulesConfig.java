@@ -2,7 +2,7 @@ package org.analogweb.xstream;
 
 import org.analogweb.ModulesBuilder;
 import org.analogweb.PluginModulesConfig;
-import org.analogweb.core.direction.Xml;
+import org.analogweb.core.response.Xml;
 import org.analogweb.util.MessageResource;
 import org.analogweb.util.PropertyResourceBundleMessageResource;
 import org.analogweb.util.logging.Log;
@@ -28,7 +28,7 @@ public class XStreamPluginModulesConfig implements PluginModulesConfig {
     @Override
     public ModulesBuilder prepare(ModulesBuilder builder) {
         log.log(PLUGIN_MESSAGE_RESOURCE, "IXSB000001");
-        builder.addDirectionFormatterClass(Xml.class, XStreamXmlFormatter.class);
+        builder.addResponseFormatterClass(Xml.class, XStreamXmlFormatter.class);
         builder.addAttributesHandlerClass(XStreamXmlTypeMapper.class);
         return builder;
     }

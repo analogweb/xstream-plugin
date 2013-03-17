@@ -3,7 +3,7 @@ package org.analogweb.xstream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.analogweb.DirectionFormatter;
+import org.analogweb.ResponseFormatter;
 import org.analogweb.RequestContext;
 import org.analogweb.ResponseContext;
 import org.analogweb.ResponseContext.ResponseEntity;
@@ -20,7 +20,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * を使用するよう設定されます。
  * @author snowgoose
  */
-public class XStreamXmlFormatter implements DirectionFormatter {
+public class XStreamXmlFormatter implements ResponseFormatter {
 
     private XStream xStream;
 

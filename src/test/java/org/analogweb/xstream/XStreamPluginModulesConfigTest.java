@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.analogweb.ModulesBuilder;
-import org.analogweb.core.direction.Xml;
+import org.analogweb.core.response.Xml;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,11 +27,11 @@ public class XStreamPluginModulesConfigTest {
 
     @Test
     public void testPrepare() {
-        when(builder.addDirectionFormatterClass(Xml.class, XStreamXmlFormatter.class)).thenReturn(
+        when(builder.addResponseFormatterClass(Xml.class, XStreamXmlFormatter.class)).thenReturn(
                 builder);
         ModulesBuilder actual = config.prepare(builder);
         assertThat(actual, is(builder));
-        verify(builder).addDirectionFormatterClass(Xml.class, XStreamXmlFormatter.class);
+        verify(builder).addResponseFormatterClass(Xml.class, XStreamXmlFormatter.class);
         verify(builder).addAttributesHandlerClass(XStreamXmlTypeMapper.class);
     }
 
