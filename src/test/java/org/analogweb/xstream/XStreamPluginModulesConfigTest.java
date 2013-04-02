@@ -32,7 +32,6 @@ public class XStreamPluginModulesConfigTest {
         ModulesBuilder actual = config.prepare(builder);
         assertThat(actual, is(builder));
         verify(builder).addResponseFormatterClass(Xml.class, XStreamXmlFormatter.class);
-        verify(builder).addAttributesHandlerClass(XStreamXmlTypeMapper.class);
+        verify(builder).addRequestValueResolverClass(XStreamXmlValueResolver.class);
     }
-
 }

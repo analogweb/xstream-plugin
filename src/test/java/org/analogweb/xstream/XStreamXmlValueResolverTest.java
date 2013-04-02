@@ -21,15 +21,15 @@ import org.junit.Test;
 /**
  * @author snowgoose
  */
-public class XStreamXmlTypeMapperTest {
+public class XStreamXmlValueResolverTest {
 
-    private XStreamXmlTypeMapper mapper;
+    private XStreamXmlValueResolver mapper;
     private RequestContext requestContext;
     private Headers headers;
 
     @Before
     public void setUp() throws Exception {
-        mapper = new XStreamXmlTypeMapper();
+        mapper = new XStreamXmlValueResolver();
         requestContext = mock(RequestContext.class);
         headers = mock(Headers.class);
     }
@@ -42,7 +42,7 @@ public class XStreamXmlTypeMapperTest {
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age></org.analogweb.xstream.model.Foo>"
                         .getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
         assertThat(actual.getName(), is("foo"));
         assertThat(actual.getAge(), is(34));
         // TODO
@@ -55,7 +55,7 @@ public class XStreamXmlTypeMapperTest {
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         InputStream from = new ByteArrayInputStream("XXX".getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
         assertThat(actual, is(nullValue()));
     }
 
@@ -70,7 +70,7 @@ public class XStreamXmlTypeMapperTest {
             }
         };
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
         assertThat(actual, is(nullValue()));
     }
 
@@ -80,7 +80,7 @@ public class XStreamXmlTypeMapperTest {
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
         InputStream from = new ByteArrayInputStream("???".getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveAttributeValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
         assertThat(actual, is(nullValue()));
     }
 

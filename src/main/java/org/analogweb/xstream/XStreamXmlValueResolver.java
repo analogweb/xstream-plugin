@@ -8,9 +8,8 @@ import org.analogweb.InvocationMetadata;
 import org.analogweb.MediaType;
 import org.analogweb.RequestContext;
 import org.analogweb.TypeMapper;
-import org.analogweb.core.AbstractAttributesHandler;
 import org.analogweb.core.MediaTypes;
-import org.analogweb.core.SpecificMediaTypeAttirbutesHandler;
+import org.analogweb.core.SpecificMediaTypeRequestValueResolver;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
@@ -24,8 +23,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * 必要があります。
  * @author snowgoose
  */
-public class XStreamXmlTypeMapper extends AbstractAttributesHandler implements
-        SpecificMediaTypeAttirbutesHandler {
+public class XStreamXmlValueResolver implements SpecificMediaTypeRequestValueResolver {
 
     private XStream xStream;
 
@@ -34,13 +32,8 @@ public class XStreamXmlTypeMapper extends AbstractAttributesHandler implements
     }
 
     @Override
-    public String getScopeName() {
-        return "xml";
-    }
-
-    @Override
-    public Object resolveAttributeValue(RequestContext context, InvocationMetadata metadata,
-            String key, Class<?> requiredType) {
+    public Object resolveValue(RequestContext context, InvocationMetadata metadata, String key,
+            Class<?> requiredType) {
         XStream xStream = getXStream();
         try {
             return fromXml(xStream, context.getRequestBody());
@@ -69,5 +62,4 @@ public class XStreamXmlTypeMapper extends AbstractAttributesHandler implements
         }
         return this.xStream;
     }
-
 }
