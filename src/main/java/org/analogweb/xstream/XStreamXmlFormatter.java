@@ -36,9 +36,9 @@ public class XStreamXmlFormatter implements ResponseFormatter {
     }
 
     @Override
-    public void formatAndWriteInto(RequestContext response, ResponseContext writeTo,
+    public ResponseEntity formatAndWriteInto(RequestContext response, ResponseContext writeTo,
             String charset, final Object source) {
-        writeTo.getResponseWriter().writeEntity(new ResponseEntity() {
+        return new ResponseEntity() {
             @Override
             public void writeInto(OutputStream responseBody) throws IOException {
                 try {
@@ -47,7 +47,11 @@ public class XStreamXmlFormatter implements ResponseFormatter {
                     throw new FormatFailureException(e, source, getClass().getName());
                 }
             }
-        });
+			@Override
+			public long getContentLength() {
+				return -1;
+			}
+        };
     }
 
 }

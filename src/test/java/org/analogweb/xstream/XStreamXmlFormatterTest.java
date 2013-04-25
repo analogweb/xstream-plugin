@@ -50,8 +50,7 @@ public class XStreamXmlFormatterTest {
         Foo f = new Foo();
         // TODO 
         //        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f);
-        writer.getEntity().writeInto(out);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(out);
         String actual = new String(out.toByteArray());
         assertThat(
                 actual,
@@ -78,8 +77,7 @@ public class XStreamXmlFormatterTest {
         };
         Foo f = new Foo();
         f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f);
-        writer.getEntity().writeInto(out);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(out);
     }
 
 }
