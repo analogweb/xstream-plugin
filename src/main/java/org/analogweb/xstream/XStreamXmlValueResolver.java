@@ -3,6 +3,7 @@ package org.analogweb.xstream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.annotation.Annotation;
 
 import org.analogweb.InvocationMetadata;
 import org.analogweb.MediaType;
@@ -33,7 +34,7 @@ public class XStreamXmlValueResolver implements SpecificMediaTypeRequestValueRes
 
     @Override
     public Object resolveValue(RequestContext context, InvocationMetadata metadata, String key,
-            Class<?> requiredType) {
+            Class<?> requiredType, Annotation[] annotations) {
         XStream xStream = getXStream();
         try {
             return fromXml(xStream, context.getRequestBody());

@@ -42,7 +42,7 @@ public class XStreamXmlValueResolverTest {
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age></org.analogweb.xstream.model.Foo>"
                         .getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual.getName(), is("foo"));
         assertThat(actual.getAge(), is(34));
         // TODO
@@ -55,7 +55,7 @@ public class XStreamXmlValueResolverTest {
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
         InputStream from = new ByteArrayInputStream("XXX".getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));
     }
 
@@ -70,7 +70,7 @@ public class XStreamXmlValueResolverTest {
             }
         };
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));
     }
 
@@ -80,7 +80,7 @@ public class XStreamXmlValueResolverTest {
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
         InputStream from = new ByteArrayInputStream("???".getBytes());
         when(requestContext.getRequestBody()).thenReturn(from);
-        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class);
+        Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));
     }
 
