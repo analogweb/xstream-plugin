@@ -39,8 +39,7 @@
         <url>scm:git:git@github.com:analogweb/xstream-plugin.git</url>
 		<connection>scm:git:git@github.com:analogweb/xstream-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:analogweb/xstream-plugin.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
+    </scm>
 	<licenses>
 		<license>
 			<name>MIT license</name>
