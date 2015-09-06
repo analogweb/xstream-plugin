@@ -3,7 +3,6 @@ package org.analogweb.xstream;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -11,8 +10,6 @@ import java.text.SimpleDateFormat;
 
 import org.analogweb.RequestContext;
 import org.analogweb.ResponseContext;
-import org.analogweb.ResponseContext.ResponseWriter;
-import org.analogweb.core.DefaultResponseWriter;
 import org.analogweb.core.FormatFailureException;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
@@ -45,8 +42,6 @@ public class XStreamXmlFormatterTest {
     @Test
     public void testFormatAndWriteInto() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-        ResponseWriter writer = new DefaultResponseWriter();
-        when(responseContext.getResponseWriter()).thenReturn(writer);
         Foo f = new Foo();
         // TODO 
         //        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
@@ -61,8 +56,6 @@ public class XStreamXmlFormatterTest {
     public void testFormatAndWriteIntoRaiseStreamException() throws Exception {
         thrown.expect(FormatFailureException.class);
         ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-        ResponseWriter writer = new DefaultResponseWriter();
-        when(responseContext.getResponseWriter()).thenReturn(writer);
         formatter = new XStreamXmlFormatter() {
             @Override
             protected XStream initXStream() {
