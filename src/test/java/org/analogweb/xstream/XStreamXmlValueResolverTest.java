@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.analogweb.Headers;
+import org.analogweb.ReadableBuffer;
 import org.analogweb.RequestContext;
+import org.analogweb.core.DefaultReadableBuffer;
 import org.analogweb.core.MediaTypes;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
@@ -38,9 +40,10 @@ public class XStreamXmlValueResolverTest {
     public void testMapToType() throws Exception {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
-        InputStream from = new ByteArrayInputStream(
+        InputStream in = new ByteArrayInputStream(
                 "<?xml version=\"1.0\" ?><org.analogweb.xstream.model.Foo><name>foo</name><age>34</age></org.analogweb.xstream.model.Foo>"
                         .getBytes());
+        ReadableBuffer from = DefaultReadableBuffer.readBuffer(in);
         when(requestContext.getRequestBody()).thenReturn(from);
         Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual.getName(), is("foo"));
@@ -53,7 +56,8 @@ public class XStreamXmlValueResolverTest {
     public void testMapToTypeWithoutXmlStream() throws Exception {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/xml"));
-        InputStream from = new ByteArrayInputStream("XXX".getBytes());
+        InputStream in = new ByteArrayInputStream("XXX".getBytes());
+        ReadableBuffer from = DefaultReadableBuffer.readBuffer(in);
         when(requestContext.getRequestBody()).thenReturn(from);
         Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));
@@ -63,12 +67,13 @@ public class XStreamXmlValueResolverTest {
     public void testMapToTypeWithIOError() throws Exception {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
-        InputStream from = new InputStream() {
+        InputStream in = new InputStream() {
             @Override
             public int read() throws IOException {
                 throw new IOException();
             }
         };
+        ReadableBuffer from = DefaultReadableBuffer.readBuffer(in);
         when(requestContext.getRequestBody()).thenReturn(from);
         Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));
@@ -78,7 +83,8 @@ public class XStreamXmlValueResolverTest {
     public void testMapToTypeAnotherContentType() throws Exception {
         when(requestContext.getRequestHeaders()).thenReturn(headers);
         when(headers.getValues("Content-Type")).thenReturn(Arrays.asList("application/x-d"));
-        InputStream from = new ByteArrayInputStream("???".getBytes());
+        InputStream in = new ByteArrayInputStream("???".getBytes());
+        ReadableBuffer from = DefaultReadableBuffer.readBuffer(in);
         when(requestContext.getRequestBody()).thenReturn(from);
         Foo actual = (Foo) mapper.resolveValue(requestContext, null, null, Foo.class, null);
         assertThat(actual, is(nullValue()));

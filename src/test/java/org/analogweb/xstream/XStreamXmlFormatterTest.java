@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 
 import org.analogweb.RequestContext;
 import org.analogweb.ResponseContext;
+import org.analogweb.WritableBuffer;
+import org.analogweb.core.DefaultWritableBuffer;
 import org.analogweb.core.FormatFailureException;
 import org.analogweb.xstream.model.Foo;
 import org.junit.Before;
@@ -21,7 +23,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
 
 /**
- * @author snowgoose
+ * @author y2k2mt
  */
 public class XStreamXmlFormatterTest {
 
@@ -42,10 +44,11 @@ public class XStreamXmlFormatterTest {
     @Test
     public void testFormatAndWriteInto() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        WritableBuffer buffer = DefaultWritableBuffer.writeBuffer(out);
         Foo f = new Foo();
         // TODO 
         //        f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(out);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(buffer);
         String actual = new String(out.toByteArray());
         assertThat(
                 actual,
@@ -56,6 +59,7 @@ public class XStreamXmlFormatterTest {
     public void testFormatAndWriteIntoRaiseStreamException() throws Exception {
         thrown.expect(FormatFailureException.class);
         ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        WritableBuffer buffer = DefaultWritableBuffer.writeBuffer(out);
         formatter = new XStreamXmlFormatter() {
             @Override
             protected XStream initXStream() {
@@ -70,7 +74,7 @@ public class XStreamXmlFormatterTest {
         };
         Foo f = new Foo();
         f.setBirthDay(new SimpleDateFormat("yyyyMMdd").parse("19780420"));
-        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(out);
+        formatter.formatAndWriteInto(context, responseContext, "UTF-8", f).writeInto(buffer);
     }
 
 }

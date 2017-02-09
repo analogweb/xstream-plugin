@@ -5,10 +5,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.annotation.Annotation;
 
-import org.analogweb.InvocationMetadata;
-import org.analogweb.MediaType;
-import org.analogweb.RequestContext;
-import org.analogweb.TypeMapper;
+import org.analogweb.*;
 import org.analogweb.core.MediaTypes;
 import org.analogweb.core.SpecificMediaTypeRequestValueResolver;
 
@@ -43,10 +40,12 @@ public class XStreamXmlValueResolver implements SpecificMediaTypeRequestValueRes
         }
     }
 
-    protected Object fromXml(XStream xStream, InputStream from) {
+    protected Object fromXml(XStream xStream, ReadableBuffer from) {
         try {
-            return xStream.fromXML(from);
-        } catch (StreamException e) {
+            return xStream.fromXML(from.asInputStream());
+        } catch (StreamException se){
+            return null;
+        } catch (IOException e) {
             return null;
         }
     }

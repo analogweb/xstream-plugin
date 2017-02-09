@@ -3,10 +3,7 @@ package org.analogweb.xstream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.analogweb.ResponseFormatter;
-import org.analogweb.RequestContext;
-import org.analogweb.ResponseContext;
-import org.analogweb.ResponseEntity;
+import org.analogweb.*;
 import org.analogweb.core.FormatFailureException;
 
 import com.thoughtworks.xstream.XStream;
@@ -14,11 +11,7 @@ import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
- * XStreamフレームワークを使用したXMLの
- * レンダリングを行う{@link DirectionFormatter}の実装です。<br/>
- * 既定の実装では、{@link XStream}がXMLを生成する際{@link StaxDriver}
- * を使用するよう設定されます。
- * @author snowgoose
+ * @author y2k2mt
  */
 public class XStreamXmlFormatter implements ResponseFormatter {
 
@@ -40,9 +33,9 @@ public class XStreamXmlFormatter implements ResponseFormatter {
             String charset, final Object source) {
         return new ResponseEntity() {
             @Override
-            public void writeInto(OutputStream responseBody) throws IOException {
+            public void writeInto(WritableBuffer responseBody) throws IOException {
                 try {
-                    getXStream().toXML(source, responseBody);
+                    getXStream().toXML(source, responseBody.asOutputStream());
                 } catch (StreamException e) {
                     throw new FormatFailureException(e, source, getClass().getName());
                 }

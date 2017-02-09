@@ -9,18 +9,13 @@ import org.analogweb.util.logging.Log;
 import org.analogweb.util.logging.Logs;
 
 /**
- * <a href="http://xstream.codehaus.org/">XStream</a>フレームワークを
+ * Integrating <a href="http://xstream.codehaus.org/">XStream</a> to
  * <a href="https://github.com/analogweb">Analog Web Framework</a>
- * に統合する{@link PluginModulesConfig}です。<br/>
- * このプラグインを使用することで、{@link Xml}使用時に、
- * XStreamを利用したXMLの生成とレスポンスを行う事が可能になります。
- * @author snowgoose
+ * This plugin processing {@link Xml} with XStream.
+ * @author y2k2mt
  */
 public class XStreamPluginModulesConfig implements PluginModulesConfig {
 
-    /**
-     * XStreamプラグインで使用する{@link MessageResource}です。
-     */
     public static final MessageResource PLUGIN_MESSAGE_RESOURCE = new PropertyResourceBundleMessageResource(
             "org.analogweb.xstream.analog-messages");
     private static final Log log = Logs.getLog(XStreamPluginModulesConfig.class);
